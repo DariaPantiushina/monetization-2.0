@@ -1,1 +1,2 @@
-# monetization-2.0
+# New platform’s monetization strategy
+
