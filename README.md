@@ -32,8 +32,7 @@ Wrote SQL queries to support research:
 
 1) Performed **rolling retention** analysis by user registration date (cohort analysis) — to understand how actively users engage with the platform and how many return after a given period. This analysis helped determine the **optimal duration** for pricing plans (recommendations from the analysis are provided in the report)
 
-![](<img width="1103" height="799" alt="image" src="https://github.com/user-attachments/assets/855956f8-45c9-465e-bfb9-37c9c7755981" />
-)
+![Rolling retention chart](images/rolling_retention.png)
 
 
 
