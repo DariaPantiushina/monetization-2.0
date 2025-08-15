@@ -1,1 +1,39 @@
+/* 1. Rolling retention */
 
+WITH diff AS (
+	SELECT
+		to_char(date_joined, 'YYYY-MM') as ym,
+		u.id,
+		(CASE 
+			WHEN EXTRACT(days FROM entry_at - date_joined) IS NULL THEN 0
+			ELSE EXTRACT(days FROM entry_at - date_joined)
+		END) AS diff
+	FROM users u
+	LEFT JOIN userentry u2 ON u.id = u2.user_id
+	WHERE date_joined > DATE '2021-10-31' /* ed-tech platform was launched in November 2021 */
+	GROUP BY u.id, ym, u2.entry_at
+	ORDER BY id ASC),
+count_users AS (
+	SELECT
+		ym,
+		COUNT(DISTINCT CASE WHEN diff >= 0 THEN id ELSE NULL END) AS day_0,
+		COUNT(DISTINCT CASE WHEN diff >= 1 THEN id ELSE NULL END) AS day_1,
+		COUNT(DISTINCT CASE WHEN diff >= 3 THEN id ELSE NULL END) AS day_3,
+		COUNT(DISTINCT CASE WHEN diff >= 7 THEN id ELSE NULL END) AS day_7,
+		COUNT(DISTINCT CASE WHEN diff >= 14 THEN id ELSE NULL END) AS day_14,
+		COUNT(DISTINCT CASE WHEN diff >= 30 THEN id ELSE NULL END) AS day_30,
+		COUNT(DISTINCT CASE WHEN diff >= 60 THEN id ELSE NULL END) AS day_60,
+		COUNT(DISTINCT CASE WHEN diff >= 90 THEN id ELSE NULL END) AS day_90
+	FROM diff
+	GROUP BY ym)
+SELECT
+	ym,
+	round((day_0 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_0,
+	round((day_1 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_1,
+	round((day_3 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_3,
+	round((day_7 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_7,
+	round((day_14 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_14,
+	round((day_30 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_30,
+	round((day_60 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_60,
+	round((day_90 * 1.0 / FIRST_VALUE(day_0) OVER (PARTITION BY ym)) * 100, 2) AS day_90
+FROM count_users;
