@@ -1,4 +1,4 @@
-# Platform monetization model update
+# Ed-tech platform monetization model update
 
 **Business context**: The ed-tech platform N., which helps candidates prepare for analyst interviews and practice programming skills through problem-solving and tests, aims to change its monetization model.
 Currently, monetization is based on an internal currency called CodeCoins. Users earn coins through activity on the platform (for example, by solving problems or passing tests) and spend them on locked tasks and other premium materials. If they don’t have enough coins, they can purchase more with real money.
